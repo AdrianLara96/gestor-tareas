@@ -11,11 +11,19 @@ Aplicación full stack para gestión de tareas desarrollada con Vue 3 y Supabase
 
 ##  Características
 
-- ✅ Autenticación de usuarios (login/registro)
-- ✅ Roles de usuario (admin / usuario público)
-- ✅ Protección de rutas
-- ✅ CRUD de tareas (pendiente de implementar)
-- ✅ Modo oscuro automático
+- Autenticación de usuarios (login/registro)
+- Roles de usuario (admin / usuario público)
+- Protección de rutas
+- Integración con Supabase Database
+- Estados de carga y error en UI
+- CRUD de tareas
+- Modo oscuro automático
+
+## CRUD de tareas
+
+- Componente TaskForm para crear/editar tareas
+- Componente TaskList para mostrar tareas del usuario
+- Acciones: completar, posponer, editar, eliminar
 
 ##  Instalación
 

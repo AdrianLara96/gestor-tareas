@@ -18,7 +18,7 @@ const handleSubmit = async () => {
 <template>
   <div class="auth-container bg-base">
     <div class="auth-card card">
-      <h1 class="text-main">🔐 Iniciar Sesión</h1>
+      <h1 class="text-main">Iniciar Sesión</h1>
       
       <!-- Mensaje de error -->
       <div v-if="error" class="error-message">

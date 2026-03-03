@@ -18,7 +18,7 @@ const handleSubmit = async () => {
   const result = await register(email.value, password.value)
   
   if (result.success) {
-    successMessage.value = '✅ Registro completado. Por favor, revisa tu email para verificar tu cuenta.'
+    successMessage.value = 'Registro completado. Por favor, revisa tu email para verificar tu cuenta.'
     // Limpiar el formulario
     email.value = ''
     password.value = ''
@@ -30,7 +30,7 @@ const handleSubmit = async () => {
 <template>
   <div class="auth-container bg-base">
     <div class="auth-card card">
-      <h1 class="text-main">📝 Crear Cuenta</h1>
+      <h1 class="text-main">Crear Cuenta</h1>
       
       <!-- Mensaje de error -->
       <div v-if="error" class="error-message">
