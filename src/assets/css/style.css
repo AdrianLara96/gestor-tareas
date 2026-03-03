@@ -1,0 +1,144 @@
+:root {
+  /* === TIPOGRAFÍA Y BASE === */
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* === PALETA DE COLORES - MODO CLARO === */
+  /* Fondos */
+  --color-bg-base: #F9FAFB;
+  --color-bg-surface: #FFFFFF;
+  
+  /* Textos */
+  --color-text-main: #111827;
+  --color-text-muted: #6B7280;
+  
+  /* Brand */
+  --color-primary: #10B981;
+  --color-primary-hover: #059669;
+  
+  /* Utilidad para texto sobre botones */
+  --color-on-primary: #FFFFFF; 
+  --color-border: #E5E7EB;
+  
+  /* === COLORES PARA MODO CLARO === */
+  color-scheme: light;
+  color: var(--color-text-main);
+  background-color: var(--color-bg-base);
+}
+
+/* === MODO OSCURO === */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* === PALETA DE COLORES - MODO OSCURO === */
+    --color-bg-base: #111827;        
+    --color-bg-surface: #1F2937;     
+    --color-text-main: #F9FAFB;      
+    --color-text-muted: #9CA3AF;     
+    --color-primary: #34D399;        
+    --color-primary-hover: #10B981;  
+    --color-on-primary: #111827;     
+    --color-border: #374151;         
+    
+    color-scheme: dark;
+    color: var(--color-text-main);
+    background-color: var(--color-bg-base);
+  }
+}
+
+/* === ESTILOS GLOBALES === */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+  background-color: var(--color-bg-base);
+  color: var(--color-text-main);
+}
+
+/* === ENLACES === */
+a {
+  font-weight: 500;
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+a:hover {
+  color: var(--color-primary-hover);
+}
+
+/* === TÍTULOS === */
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+  color: var(--color-text-main);
+}
+
+/* === BOTONES === */
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+button:hover {
+  background-color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+  outline-offset: 2px;
+}
+
+/* === BOTÓN SECUNDARIO === */
+button.secondary {
+  background-color: transparent;
+  color: var(--color-text-main);
+  border-color: var(--color-border);
+}
+button.secondary:hover {
+  background-color: var(--color-bg-surface);
+  border-color: var(--color-primary);
+}
+
+/* === TARJETAS === */
+.card {
+  padding: 2em;
+  background-color: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* === CONTENEDOR PRINCIPAL === */
+#app {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+  width: 100%;
+}
+
+/* === UTILIDADES DE TEXTO === */
+.text-main { color: var(--color-text-main); }
+.text-muted { color: var(--color-text-muted); }
+.bg-base { background-color: var(--color-bg-base); }
+.bg-surface { background-color: var(--color-bg-surface); }
