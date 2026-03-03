@@ -1,5 +1,24 @@
-# Vue 3 + Vite
+#  Gestor de Tareas
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+Aplicación full stack para gestión de tareas desarrollada con Vue 3 y Supabase.
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+##  Tecnologías
+
+- **Frontend**: Vue 3 + Vite + JavaScript
+- **Backend**: Supabase (Auth, Database, Storage)
+- **Estilos**: CSS con variables y modo oscuro automático
+- **Router**: Vue Router con guardias de navegación
+
+##  Características
+
+- ✅ Autenticación de usuarios (login/registro)
+- ✅ Roles de usuario (admin / usuario público)
+- ✅ Protección de rutas
+- ✅ CRUD de tareas (pendiente de implementar)
+- ✅ Modo oscuro automático
+
+##  Instalación
+
+```bash
+npm install
+npm run dev
