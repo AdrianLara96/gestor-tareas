@@ -5,6 +5,14 @@ import { supabase } from '../lib/supabase'
 import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
 import Dashboard from '../views/Dashboard.vue'
+import ProfileEdit from '../views/profile/ProfileEdit.vue'
+
+// Nuevas vistas para la galería pública 
+import UserGallery from '../views/public/UserGallery.vue'
+import UserDetail from '../views/public/UserDetail.vue'
+
+// Nuevas vistas para admin
+import AdminDashboard from '../views/admin/AdminDashboard.vue'
 
 const routes = [
   {
@@ -29,7 +37,31 @@ const routes = [
     name: 'Dashboard',
     component: Dashboard,
     meta: { requiresAuth: true } // Solo usuarios logueados
-  }
+  },
+  {
+    path: '/profile',
+    name: 'Profile',
+    component: ProfileEdit,
+    meta: { requiresAuth: true } // Solo usuarios logueados
+  },
+  {
+    path: '/public/users',
+    name: 'UserGallery',
+    component: UserGallery,
+    meta: { requiresAuth: false } // Público (cualquiera puede ver)
+  },
+  {
+    path: '/public/users/:id',
+    name: 'UserDetail',
+    component: UserDetail,
+    meta: { requiresAuth: false } // Público (cualquiera puede ver)
+  },
+  {
+    path: '/admin',
+    name: 'AdminDashboard',
+    component: AdminDashboard,
+    meta: { requiresAuth: true, requiresAdmin: true } // Solo admins
+  }        
 ]
 
 const router = createRouter({
@@ -53,6 +85,21 @@ router.beforeEach(async (to, from, next) => {
   else if (to.meta.requiresGuest && isLoggedIn) {
     next('/dashboard') // Redirigir a dashboard
   }
+  // Ruta para admins: verificar rol
+  else if (to.meta.requiresAdmin && isLoggedIn) {
+    // Verificar si el usuario tiene rol de admin
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', session.user.id)
+      .single()
+
+    if (profile?.role !== 'admin') {
+      next('/dashboard') // No es admin, redirigir a dashboard
+    } else {
+      next() // Es admin, permitir acceso
+    }
+  }  
   // En cualquier otro caso, permitir navegación
   else {
     next()

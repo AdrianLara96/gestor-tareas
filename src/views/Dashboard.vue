@@ -1,6 +1,7 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useAuth } from '../composables/useAuth'
+import { supabase } from '../lib/supabase'
 import TaskForm from '../components/TaskForm.vue'
 import TaskList from '../components/TaskList.vue'
 
@@ -10,6 +11,24 @@ const { user, logout } = useAuth()
 const showForm = ref(false)
 const taskToEdit = ref(null)
 const taskListRef = ref(null)
+
+const isAdmin = ref(false)
+
+// Verificar si el usuario es admin al montar
+onMounted(async () => {
+  if (user.value) {
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.value.id)
+      .single()
+    
+    if (!profileError && profile) {
+      isAdmin.value = profile.role === 'admin'
+      
+    }
+  }
+})
 
 // Manejar creación de tarea
 const handleTaskCreated = (newTask) => {
@@ -52,7 +71,20 @@ const handleTaskDeleted = () => {
     <div class="dashboard-card card">
       <!-- Header -->
       <header class="dashboard-header">
-        <h1 class="text-main">📋 Gestor de Tareas</h1>
+        <div class="header-left">
+          <h1 class="text-main">📋 Gestor de Tareas</h1>
+          <div class="header-buttons">
+            <router-link to="/profile" class="btn-profile">
+              👤 Mi Perfil
+            </router-link>
+            <router-link to="/public/users" class="btn-gallery">
+              🌍 Galería
+            </router-link>
+            <router-link v-if="isAdmin" to="/admin" class="btn-admin">
+              🔐 Admin
+            </router-link>
+          </div>
+        </div>
         <button @click="logout" class="btn-secondary">
           Cerrar Sesión
         </button>
@@ -114,6 +146,51 @@ const handleTaskDeleted = () => {
   margin: 0;
 }
 
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+}
+
+.header-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-profile,
+.btn-gallery,
+.btn-admin {
+  background-color: transparent;
+  color: var(--color-text-main);
+  border: 1px solid var(--color-border);
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-profile:hover,
+.btn-gallery:hover,
+.btn-admin:hover {
+  background-color: var(--color-bg-surface);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.btn-admin {
+  border-color: #f59e0b;
+  color: #f59e0b;
+}
+
+.btn-admin:hover {
+  background-color: rgba(245, 158, 11, 0.1);
+  border-color: #f59e0b;
+  color: #f59e0b;
+}
+
 .btn-secondary {
   background-color: transparent;
   color: var(--color-text-main);
@@ -124,6 +201,7 @@ const handleTaskDeleted = () => {
   transition: all 0.2s ease;
   font-family: inherit;
   font-size: 0.9rem;
+  margin-left: 0.5rem;
 }
 
 .btn-secondary:hover {

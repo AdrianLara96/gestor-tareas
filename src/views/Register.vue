@@ -18,7 +18,12 @@ const handleSubmit = async () => {
   const result = await register(email.value, password.value)
   
   if (result.success) {
-    successMessage.value = 'Registro completado. Por favor, revisa tu email para verificar tu cuenta.'
+    // ✅ Redirigir a profile para completar información
+    router.push('/profile')
+    
+    // Mostrar mensaje de éxito antes de redirigir
+    successMessage.value = '✅ Registro completado. Por favor, completa tu perfil.'
+    
     // Limpiar el formulario
     email.value = ''
     password.value = ''
