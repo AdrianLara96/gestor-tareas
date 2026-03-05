@@ -179,4 +179,29 @@ const handleSubmit = async () => {
   color: var(--color-primary-hover);
   text-decoration: underline;
 }
+
+/* Responsive para móviles */
+@media (max-width: 640px) {
+  .auth-container {
+    padding: 1rem;
+  }
+
+  .auth-card {
+    padding: 1.5rem 1rem;
+  }
+
+  .auth-card h1 {
+    font-size: 1.5rem;
+  }
+
+  .form-input {
+    padding: 0.6rem;
+    font-size: 0.9rem;
+  }
+
+  .auth-form button {
+    width: 100%;
+    padding: 0.75rem;
+  }
+}
 </style>

@@ -590,6 +590,7 @@ h1 {
   font-family: inherit;
   font-size: 0.9rem;
   font-weight: 500;
+  margin:0;
 }
 
 .btn-primary:hover:not(:disabled) {
@@ -599,5 +600,51 @@ h1 {
 .btn-primary:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+/* Responsive para móviles */
+@media (max-width: 640px) {
+  .profile-container {
+    padding: 1rem;
+  }
+
+  .profile-card {
+    padding: 1rem;
+  }
+
+  .profile-card h1 {
+    font-size: 1.4rem;
+  }
+
+  .avatar-section {
+    padding-bottom: 1rem;
+  }
+
+  .avatar-preview {
+    width: 120px;
+    height: 120px;
+  }
+
+  .avatar-placeholder {
+    font-size: 2.5rem;
+  }
+
+  .avatar-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .avatar-actions button {
+    width: 100%;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .form-actions button {
+    width: 100%;
+  }
 }
 </style>

@@ -292,6 +292,15 @@ const formatDate = (dateString) => {
   margin-bottom: 2rem;
   padding-bottom: 1rem;
   border-bottom: 1px solid var(--color-border);
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.admin-header > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0; 
 }
 
 .btn-back-dashboard {
@@ -312,11 +321,20 @@ const formatDate = (dateString) => {
 }
 
 .admin-header h1 {
-  margin: 0 0 0.25rem 0;
+  margin: 0;
+  font-size: 1.5rem;
+  line-height: 1.2;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
 }
 
 .admin-header p {
   margin: 0;
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .btn-secondary {
@@ -386,12 +404,14 @@ const formatDate = (dateString) => {
 
 .table-responsive {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .users-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.9rem;
+  min-width: 800px;
 }
 
 .users-table th,
@@ -399,12 +419,15 @@ const formatDate = (dateString) => {
   padding: 0.75rem;
   text-align: left;
   border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
 }
 
 .users-table th {
   background-color: var(--color-bg-base);
   font-weight: 600;
   color: var(--color-text-main);
+  position: sticky;
+  top: 0;
 }
 
 .users-table tr:hover {
@@ -475,5 +498,63 @@ const formatDate = (dateString) => {
 .btn-visibility:hover:not(:disabled) {
   border-color: var(--color-primary);
   background-color: rgba(16, 185, 129, 0.1);
+}
+
+/* Responsive para móviles */
+@media (max-width: 640px) {
+  .admin-container {
+    padding: 1rem;
+  }
+
+  .admin-card {
+    padding: 1rem;
+  }
+
+  .admin-header {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    gap: 0.75rem;
+  }
+
+  .admin-header > div {
+    width: 100%;
+  }
+
+  .admin-header p {
+    font-size: 0.85rem;
+  }
+
+  .admin-header .btn-secondary {
+    align-self: flex-end;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-card {
+    padding: 1rem;
+  }
+
+  .stat-number {
+    font-size: 2rem;
+  }
+
+  .users-table {
+    font-size: 0.8rem;
+  }
+
+  .users-table th,
+  .users-table td {
+    padding: 0.5rem;
+  }
+
+  .btn-action {
+    padding: 0.3rem 0.4rem;
+    font-size: 0.85rem;
+  }
 }
 </style>

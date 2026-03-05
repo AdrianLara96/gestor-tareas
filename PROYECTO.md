@@ -338,3 +338,141 @@ Seguridad
 **Progreso total:** ~80% del MVP básico
 
 **Próxima fase:** Fase 7 - Perfiles, Galería de Usuarios y Área Admin
+
+---
+
+## Fase 7: Perfiles, Galería de Usuarios y Área Admin
+
+**Objetivo:** Implementar gestión completa de perfiles de usuario con avatares, galería pública y panel de administración exclusivo.
+
+**Fecha de completado:** [Fecha actual]
+
+---
+
+### 🗄️ Cambios en Base de Datos
+
+#### Tabla `profiles` (columnas añadidas)
+| Columna | Tipo | Propósito |
+|---------|------|-----------|
+| `full_name` | text | Nombre visible públicamente |
+| `bio` | text | Biografía del usuario |
+| `avatar_url` | text | URL del avatar en Storage |
+| `is_public` | boolean | Controla visibilidad en galería |
+| `updated_at` | timestamptz | Fecha de última modificación |
+
+#### Supabase Storage: Bucket `avatars`
+- **Tipo**: Público (lectura sin autenticación)
+- **Límite**: 5 MB por archivo
+- **Tipos**: PNG, JPG, JPEG, WEBP
+- **Estructura**: `avatars/{user-id}/avatar-{timestamp}.{ext}`
+
+#### Políticas RLS configuradas
+| Bucket/Tabla | Operación | Condición |
+|-------------|-----------|-----------|
+| `storage.objects` (avatars) | SELECT | `bucket_id = 'avatars'` (público) |
+| `storage.objects` (avatars) | INSERT | `auth.role() = 'authenticated'` |
+| `storage.objects` (avatars) | UPDATE/DELETE | `owner = auth.uid()` |
+| `profiles` | SELECT | `is_public = true` OR `auth.uid() = id` |
+| `profiles` | INSERT/UPDATE/DELETE | `auth.uid() = id` |
+
+---
+
+### 📁 Nuevos Archivos Creados
+
+| Archivo | Propósito |
+|---------|-----------|
+| `src/composables/useStorage.js` | Lógica reutilizable para upload/delete de archivos |
+| `src/views/profile/ProfileEdit.vue` | Formulario para editar perfil propio |
+| `src/views/public/UserGallery.vue` | Galería pública de usuarios |
+| `src/views/public/UserDetail.vue` | Detalle de un usuario público |
+| `src/views/admin/AdminDashboard.vue` | Panel exclusivo para admins |
+
+---
+
+### 🗺️ Nuevas Rutas
+
+| Ruta | Componente | Acceso | Descripción |
+|------|------------|--------|-------------|
+| `/profile` | ProfileEdit | Auth required | Editar mi perfil |
+| `/public/users` | UserGallery | Público | Galería de usuarios públicos |
+| `/public/users/:id` | UserDetail | Público | Detalle de usuario |
+| `/admin` | AdminDashboard | Admin only | Panel de administración |
+
+---
+
+### ✨ Funcionalidades Implementadas
+
+#### 👤 Perfil de Usuario
+- Editar nombre completo, biografía y avatar
+- Toggle de perfil público/privado
+- Vista previa de avatar antes de subir
+- Validación de tipo y tamaño de archivo
+- Feedback visual de carga y éxito/error
+
+#### 🌍 Galería Pública
+- Lista de usuarios con `is_public = true`
+- Avatar, nombre y biografía resumida
+- Navegación a detalle de usuario
+- Diseño responsive con CSS Grid
+- Accesible sin login
+
+#### 🔐 Panel de Administración
+- Acceso exclusivo para `role = 'admin'`
+- Estadísticas: total usuarios, públicos, admins
+- Tabla con todos los usuarios (incluyendo privados)
+- Cambiar rol de usuario (admin ↔ usuario_publico)
+- Cambiar visibilidad pública de cualquier usuario
+
+#### 🎨 Mejoras de UX
+- Botones de navegación en Dashboard (Perfil, Galería, Admin)
+- Redirección a `/profile` después de registrarse
+- Botón "Volver al Dashboard" en perfil y admin
+- Verificación de rol admin al cargar componentes
+
+---
+
+### 🔧 Problemas Solucionados
+
+| Problema | Solución |
+|----------|----------|
+| Columna `updated_at` no existía | Añadida en Supabase Table Editor |
+| `supabase is not defined` en Dashboard | Añadida importación faltante |
+| Error al hacer clic en "Subir avatar" | Función `triggerFileInput()` con `fileInput.value?.click()` |
+| `url: undefined` en upload de avatar | Construir URL pública manualmente con formato de Supabase |
+| Avatar no se mostraba después de guardar | Actualizar `avatarUrl.value = newAvatarUrl` post-update |
+
+---
+
+### 🧪 Pruebas Realizadas ✅
+
+- [x] Editar perfil y guardar cambios
+- [x] Subir avatar y persistencia al recargar
+- [x] Toggle de perfil público/privado
+- [x] Galería pública accesible sin login
+- [x] Navegación: galería → detalle → volver
+- [x] Acceso a `/admin` como admin
+- [x] Acceso a `/admin` como usuario normal (redirige)
+- [x] Cambiar rol de usuario desde admin
+- [x] Redirección a `/profile` post-registro
+- [x] Botones de navegación en dashboard
+
+---
+
+### 📊 Estado Actual del Proyecto
+
+| Módulo | Estado | Completitud |
+|--------|--------|-------------|
+| Configuración del entorno | ✅ Completado | 100% |
+| Base de datos Supabase | ✅ Completado | 100% |
+| Autenticación (Auth) | ✅ Completado | 100% |
+| Router y protección de rutas | ✅ Completado | 100% |
+| CRUD de tareas | ✅ Completado | 100% |
+| Perfiles y avatares (Storage) | ✅ Completado | 100% |
+| Galería pública | ✅ Completado | 100% |
+| Panel de administración | ✅ Completado | 100% |
+
+
+---
+
+
+*Última actualización: [04/03/2026]*

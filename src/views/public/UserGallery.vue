@@ -280,4 +280,49 @@ const getInitials = (fullName, email) => {
 .user-card:hover .btn-view {
   color: var(--color-primary-hover);
 }
+
+/* Responsive para móviles */
+@media (max-width: 640px) {
+  .gallery-container {
+    padding: 1rem;
+  }
+
+  .gallery-header {
+    margin-bottom: 2rem;
+  }
+
+  .gallery-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .gallery-header p {
+    font-size: 0.9rem;
+  }
+
+  .users-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .user-card {
+    padding: 1rem;
+  }
+
+  .user-avatar {
+    width: 80px;
+    height: 80px;
+  }
+
+  .avatar-placeholder {
+    font-size: 1.5rem;
+  }
+
+  .user-name {
+    font-size: 1.1rem;
+  }
+
+  .user-bio {
+    font-size: 0.85rem;
+  }
+}
 </style>

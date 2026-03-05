@@ -299,4 +299,48 @@ const getInitials = (fullName, email) => {
 .badge-icon {
   font-size: 1rem;
 }
+
+/* Responsive para móviles */
+@media (max-width: 640px) {
+  .detail-container {
+    padding: 1rem;
+  }
+
+  .detail-card {
+    padding: 1rem;
+  }
+
+  .profile-avatar {
+    width: 120px;
+    height: 120px;
+  }
+
+  .avatar-placeholder {
+    font-size: 2.5rem;
+  }
+
+  .profile-name {
+    font-size: 1.5rem;
+  }
+
+  .profile-email {
+    font-size: 0.85rem;
+  }
+
+  .profile-member-since {
+    font-size: 0.8rem;
+  }
+
+  .profile-bio-section {
+    padding: 1rem;
+  }
+
+  .bio-title {
+    font-size: 1.1rem;
+  }
+
+  .profile-bio {
+    font-size: 0.9rem;
+  }
+}
 </style>

@@ -193,6 +193,7 @@ const handleCancel = () => {
   align-items: center;
   z-index: 1000;
   padding: 1rem;
+  overflow-y: auto;
 }
 
 .task-form-card {
@@ -200,6 +201,7 @@ const handleCancel = () => {
   max-width: 500px;
   max-height: 90vh;
   overflow-y: auto;
+  margin: auto;
 }
 
 .task-form {
@@ -242,8 +244,15 @@ const handleCancel = () => {
 .form-actions {
   display: flex;
   gap: 1rem;
-  justify-content: flex-end;
+  justify-content: center;
   margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+  flex-wrap: wrap;
+}
+
+.form-actions button {
+  min-width: 120px;
 }
 
 .btn-secondary {
@@ -256,6 +265,7 @@ const handleCancel = () => {
   transition: all 0.2s ease;
   font-family: inherit;
   font-size: 0.9rem;
+  font-weight: 500;
 }
 
 .btn-secondary:hover {
@@ -280,6 +290,7 @@ const handleCancel = () => {
   font-family: inherit;
   font-size: 0.9rem;
   font-weight: 500;
+  margin: 0;
 }
 
 .btn-primary:hover {
@@ -304,5 +315,34 @@ const handleCancel = () => {
 h2 {
   margin: 0;
   font-size: 1.5rem;
+}
+
+/* Responsive para móviles */
+@media (max-width: 640px) {
+  .task-form-overlay {
+    padding: 0.5rem;
+    align-items: flex-start;
+    padding-top: 2rem;
+  }
+
+  .task-form-card {
+    max-height: 95vh;
+    margin: 0;
+  }
+
+  .task-form-card h2 {
+    font-size: 1.3rem;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .form-actions button {
+    width: 100%;
+    min-width: auto;
+  }
 }
 </style>

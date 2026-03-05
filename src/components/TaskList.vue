@@ -212,46 +212,14 @@ defineExpose({
 </template>
 
 <style scoped>
+.tasks-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
 .task-list {
   width: 100%;
-}
-
-.error-message {
-  background-color: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
-  padding: 1rem;
-  border-radius: 0.375rem;
-  margin-bottom: 1rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border: 1px solid rgba(239, 68, 68, 0.2);
-}
-
-.btn-retry {
-  background-color: #ef4444;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 0.375rem;
-  cursor: pointer;
-  font-size: 0.85rem;
-}
-
-.btn-retry:hover {
-  background-color: #dc2626;
-}
-
-.loading-state,
-.empty-state {
-  text-align: center;
-  padding: 3rem 0;
-}
-
-.tasks-container {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
 }
 
 .task-item {
@@ -262,6 +230,37 @@ defineExpose({
 
 .task-item:hover {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.task-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.task-checkbox {
+  width: 1.25rem;
+  height: 1.25rem;
+  cursor: pointer;
+  accent-color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.task-title {
+  margin: 0;
+  font-size: 1.1rem;
+  flex: 1;
+  min-width: 0;
+  word-break: break-word;
+}
+
+.task-description {
+  margin: 0.5rem 0 0.5rem 2rem;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  word-break: break-word;
 }
 
 .task-completed {
@@ -275,32 +274,6 @@ defineExpose({
 
 .task-postponed {
   border-left: 4px solid #f59e0b;
-}
-
-.task-header {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 0.5rem;
-}
-
-.task-checkbox {
-  width: 1.25rem;
-  height: 1.25rem;
-  cursor: pointer;
-  accent-color: var(--color-primary);
-}
-
-.task-title {
-  margin: 0;
-  font-size: 1.1rem;
-  flex: 1;
-}
-
-.task-description {
-  margin: 0.5rem 0 0.5rem 2rem;
-  font-size: 0.9rem;
-  line-height: 1.4;
 }
 
 .task-meta {
@@ -346,6 +319,7 @@ defineExpose({
   margin-top: 1rem;
   padding-top: 0.75rem;
   border-top: 1px solid var(--color-border);
+  flex-wrap: wrap;
 }
 
 .btn-action {
@@ -356,6 +330,7 @@ defineExpose({
   cursor: pointer;
   font-size: 1rem;
   transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 
 .btn-action:hover:not(:disabled) {
@@ -371,5 +346,72 @@ defineExpose({
 .btn-delete:hover:not(:disabled) {
   border-color: #ef4444;
   color: #ef4444;
+}
+
+.error-message {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  padding: 1rem;
+  border-radius: 0.375rem;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.btn-retry {
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.btn-retry:hover {
+  background-color: #dc2626;
+}
+
+.loading-state,
+.empty-state {
+  text-align: center;
+  padding: 3rem 0;
+}
+
+/* Responsive para móviles */
+@media (max-width: 640px) {
+  .task-item {
+    padding: 0.75rem;
+  }
+
+  .task-header {
+    gap: 0.5rem;
+  }
+
+  .task-title {
+    font-size: 1rem;
+  }
+
+  .task-description {
+    margin-left: 0;
+    font-size: 0.85rem;
+  }
+
+  .task-meta {
+    margin-left: 0;
+    gap: 0.5rem;
+  }
+
+  .task-actions {
+    justify-content: flex-start;
+    gap: 0.4rem;
+  }
+
+  .btn-action {
+    padding: 0.3rem 0.5rem;
+    font-size: 0.9rem;
+  }
 }
 </style>

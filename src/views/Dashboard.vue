@@ -64,6 +64,18 @@ const handleTaskDeleted = () => {
   console.log('Tarea eliminada')
   // La lista ya se actualiza automáticamente en TaskList
 }
+
+// Obtener nombre para mostrar en el welcome
+const getWelcomeName = () => {
+  if (user.value?.user_metadata?.full_name) {
+    return user.value.user_metadata.full_name
+  }
+  if (user.value?.email) {
+    // Mostrar solo la parte antes del @
+    return user.value.email.split('@')[0]
+  }
+  return 'Usuario'
+}
 </script>
 
 <template>
@@ -92,7 +104,7 @@ const handleTaskDeleted = () => {
 
       <!-- Info del usuario -->
       <div class="user-info text-muted">
-        <p>Bienvenido, <strong>{{ user?.email }}</strong></p>
+        <p class="user-info-text">Bienvenido, <strong>{{ getWelcomeName() }}</strong></p>
       </div>
 
       <!-- Botón nueva tarea -->
@@ -139,11 +151,8 @@ const handleTaskDeleted = () => {
   margin-bottom: 1.5rem;
   padding-bottom: 1rem;
   border-bottom: 1px solid var(--color-border);
-}
-
-.dashboard-header h1 {
-  font-size: 1.8rem;
-  margin: 0;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .header-left {
@@ -151,11 +160,19 @@ const handleTaskDeleted = () => {
   align-items: center;
   gap: 1rem;
   flex: 1;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.dashboard-header h1 {
+  font-size: 1.8rem;
+  margin: 0;
 }
 
 .header-buttons {
   display: flex;
   gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .btn-profile,
@@ -164,10 +181,10 @@ const handleTaskDeleted = () => {
   background-color: transparent;
   color: var(--color-text-main);
   border: 1px solid var(--color-border);
-  padding: 0.5rem 1rem;
+  padding: 0.5rem;
   border-radius: 0.375rem;
   text-decoration: none;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   transition: all 0.2s ease;
   white-space: nowrap;
 }
@@ -187,8 +204,6 @@ const handleTaskDeleted = () => {
 
 .btn-admin:hover {
   background-color: rgba(245, 158, 11, 0.1);
-  border-color: #f59e0b;
-  color: #f59e0b;
 }
 
 .btn-secondary {
@@ -215,7 +230,17 @@ const handleTaskDeleted = () => {
   padding: 1rem;
   background-color: var(--color-bg-base);
   border-radius: 0.375rem;
+  overflow: hidden; 
 }
+
+.user-info-text {
+  margin: 0;
+  word-break: break-word; 
+  overflow-wrap: break-word;
+  max-width: 100%;
+}
+
+
 
 .dashboard-actions {
   margin-bottom: 2rem;
@@ -236,5 +261,46 @@ const handleTaskDeleted = () => {
 
 .btn-primary:hover {
   background-color: var(--color-primary-hover);
+}
+
+/* Responsive para móviles */
+@media (max-width: 640px) {
+  .dashboard-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .header-left {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .header-buttons {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .btn-profile,
+  .btn-gallery,
+  .btn-admin {
+    flex: 1;
+    text-align: center;
+    font-size: 0.8rem;
+    padding: 0.4rem 0.6rem;
+  }
+
+  .dashboard-header h1 {
+    font-size: 1.4rem;
+  }
+
+  .user-info {
+    padding: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .user-info-text {
+    font-size: 0.9rem;
+  }
 }
 </style>
