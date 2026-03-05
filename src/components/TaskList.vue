@@ -1,15 +1,23 @@
 <script setup>
-import { ref, onMounted, defineEmits } from 'vue'
+/* Importaciones */
+import { ref, onMounted, defineEmits, computed } from 'vue'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../composables/useAuth'
 
+/* Composables y props */
 const { user } = useAuth()
 const emit = defineEmits(['edit-task', 'task-deleted'])
 
+/* Estado */
 const tasks = ref([])
 const loading = ref(true)
 const error = ref(null)
 const deletingId = ref(null)
+const currentFilter = ref('all')
+const searchQuery = ref('')
+const searchTimeout = ref(null)
+
+/* Funciones */
 
 // Obtener tareas del usuario
 const fetchTasks = async () => {
@@ -32,6 +40,77 @@ const fetchTasks = async () => {
   } finally {
     loading.value = false
   }
+}
+
+// Definición de filtros disponibles
+const filters = computed(() => [
+  { 
+    value: 'all', 
+    label: 'Todas',
+    count: tasks.value.length
+  },
+  { 
+    value: 'pending', 
+    label: 'Pendientes',
+    count: tasks.value.filter(t => !t.is_completed && !t.is_postponed).length
+  },
+  { 
+    value: 'completed', 
+    label: 'Completadas',
+    count: tasks.value.filter(t => t.is_completed).length
+  },
+  { 
+    value: 'postponed', 
+    label: 'Pospuestas',
+    count: tasks.value.filter(t => t.is_postponed && !t.is_completed).length
+  }
+])
+
+// Tareas filtradas y buscadas (lógica combinada)
+const filteredTasks = computed(() => {
+  let result = [...tasks.value]
+
+  // 1. Aplicar filtro por estado
+  if (currentFilter.value === 'pending') {
+    result = result.filter(t => !t.is_completed && !t.is_postponed)
+  } else if (currentFilter.value === 'completed') {
+    result = result.filter(t => t.is_completed)
+  } else if (currentFilter.value === 'postponed') {
+    result = result.filter(t => t.is_postponed && !t.is_completed)
+  }
+
+  // 2. Aplicar búsqueda por texto
+  if (searchQuery.value.trim()) {
+    const query = searchQuery.value.toLowerCase().trim()
+    result = result.filter(task => 
+      task.title.toLowerCase().includes(query) ||
+      task.description?.toLowerCase().includes(query)
+    )
+  }
+
+  return result
+})
+
+// Manejar input de búsqueda con debounce simple (300ms)
+const handleSearchInput = () => {
+  if (searchTimeout.value) {
+    clearTimeout(searchTimeout.value)
+  }
+  searchTimeout.value = setTimeout(() => {
+    // La búsqueda se aplica automáticamente vía computed
+    console.log('Búsqueda aplicada:', searchQuery.value)
+  }, 300)
+}
+
+// Limpiar búsqueda
+const clearSearch = () => {
+  searchQuery.value = ''
+}
+
+// Resetear filtros al recargar tareas (opcional)
+const resetFilters = () => {
+  currentFilter.value = 'all'
+  searchQuery.value = ''
 }
 
 // Marcar/desmarcar como completada
@@ -110,19 +189,67 @@ const formatDate = (dateString) => {
   })
 }
 
+/* onMounted */
 // Cargar tareas al montar el componente
 onMounted(() => {
   fetchTasks()
 })
 
-// Exponer método para recargar desde el padre
+/* defioneExpose */
+// Exponer método para que el padre pueda resetear si es necesario
 defineExpose({
-  refreshTasks: fetchTasks
+  refreshTasks: fetchTasks,
+  resetFilters
 })
 </script>
 
 <template>
   <div class="task-list">
+    <!-- Filtros y Búsqueda -->
+    <div class="task-filters">
+      
+      <!-- Botones de filtro -->
+      <div class="filter-buttons" role="tablist">
+        <button
+          v-for="filter in filters"
+          :key="filter.value"
+          @click="currentFilter = filter.value"
+          class="filter-btn"
+          :class="{ active: currentFilter === filter.value }"
+          role="tab"
+          :aria-selected="currentFilter === filter.value"
+        >
+          {{ filter.label }}
+          <span v-if="filter.count !== undefined" class="filter-count">
+            {{ filter.count }}
+          </span>
+        </button>
+      </div>
+
+      <!-- Barra de búsqueda -->
+      <div class="search-box">
+        <input
+          type="text"
+          v-model="searchQuery"
+          placeholder="🔍 Buscar tareas..."
+          class="search-input"
+          @input="handleSearchInput"
+        />
+        <button
+          v-if="searchQuery"
+          @click="clearSearch"
+          class="search-clear"
+          aria-label="Limpiar búsqueda"
+        >
+          ✕
+        </button>
+      </div>
+
+      <!-- Contador de resultados -->
+      <p class="results-count text-muted">
+        Mostrando {{ filteredTasks.length }} de {{ tasks.length }} tareas
+      </p>
+    </div>
     <!-- Mensaje de error -->
     <div v-if="error" class="error-message">
       {{ error }}
@@ -140,10 +267,24 @@ defineExpose({
       <p class="text-muted">¡Crea tu primera tarea para comenzar!</p>
     </div>
 
+    <!-- Estado vacío cuando hay tareas pero no coinciden con filtro/búsqueda -->
+    <div
+      v-else-if="filteredTasks.length === 0"
+      class="empty-state-filtered"
+    >
+      <p>😕 No se encontraron tareas</p>
+      <p class="text-muted">
+        {{ searchQuery ? 'Intenta con otra búsqueda' : 'Prueba con otro filtro' }}
+      </p>
+      <button @click="resetFilters" class="btn-reset">
+        Ver todas las tareas
+      </button>
+    </div>
+
     <!-- Lista de tareas -->
     <div v-else class="tasks-container">
       <div
-        v-for="task in tasks"
+        v-for="task in filteredTasks"
         :key="task.id"
         class="task-item card"
         :class="{
@@ -217,6 +358,107 @@ defineExpose({
     flex-direction: column;
     gap: 1rem;
   }
+
+/* FILTROS Y BÚSQUEDA */
+.task-filters {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: var(--color-bg-base);
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-border);
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  background-color: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-main);
+  padding: 0.4rem 0.8rem;
+  border-radius: 1rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-family: inherit;
+}
+
+.filter-btn:hover {
+  background-color: var(--color-bg-surface);
+  border-color: var(--color-primary);
+}
+
+.filter-btn.active {
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+  border-color: var(--color-primary);
+  font-weight: 500;
+}
+
+.filter-count {
+  background-color: rgba(0, 0, 0, 0.1);
+  padding: 0.1rem 0.4rem;
+  border-radius: 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.filter-btn.active .filter-count {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.search-box {
+  position: relative;
+  margin-bottom: 0.75rem;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.6rem 2.5rem 0.6rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.375rem;
+  font-size: 0.9rem;
+  background-color: var(--color-bg-surface);
+  color: var(--color-text-main);
+  font-family: inherit;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.search-clear {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 0.25rem;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.search-clear:hover {
+  color: var(--color-text-main);
+}
+
+.results-count {
+  margin: 0;
+  font-size: 0.8rem;
+  text-align: right;
+}
 
 .task-list {
   width: 100%;
@@ -380,8 +622,54 @@ defineExpose({
   padding: 3rem 0;
 }
 
+/* Estado vacío específico para búsqueda/filtro */
+.empty-state-filtered {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: var(--color-text-muted);
+}
+
+.empty-state-filtered p {
+  margin: 0.5rem 0;
+}
+
+.empty-state-filtered .btn-reset {
+  margin-top: 1rem;
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
 /* Responsive para móviles */
 @media (max-width: 640px) {
+  .task-filters {
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .filter-buttons {
+    gap: 0.4rem;
+  }
+
+  .filter-btn {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+  }
+
+  .search-input {
+    padding: 0.5rem 2.2rem 0.5rem 0.8rem;
+    font-size: 0.85rem;
+  }
+
+  .results-count {
+    text-align: left;
+    margin-top: 0.5rem;
+  }
+  
   .task-item {
     padding: 0.75rem;
   }

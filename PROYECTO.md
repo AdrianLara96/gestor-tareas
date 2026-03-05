@@ -1,6 +1,6 @@
 # 📋 Gestor de Tareas - Documentación del Proyecto
 
-> **Aplicación full stack para gestión de tareas desarrollada con Vue 3 y Supabase**
+**Aplicación full stack para gestión de tareas desarrollada con Vue 3 y Supabase**
 
 ---
 
@@ -82,7 +82,7 @@ Almacena las tareas de cada usuario.
 
 ---
 
-### Trigger: `handle_new_user()`
+### Trigger: `handle_new_user`
 Auto-crea un perfil cuando se registra un usuario nuevo.
 
 ```sql
@@ -90,7 +90,7 @@ CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS trigger AS $$
 BEGIN
   INSERT INTO public.profiles (id, email, role, created_at)
-  VALUES (NEW.id, NEW.email, 'usuario_publico', NEW.created_at);
+  VALUES (NEW.id, NEW.email, `usuario_publico`, NEW.created_at);
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -458,21 +458,159 @@ Seguridad
 
 ---
 
+## Fase 8: Filtros y Búsqueda de Tareas
+
+**Objetivo:** Mejorar la usabilidad de la lista de tareas permitiendo filtrar por estado y buscar por texto.
+
+**Fecha de completado:** [Fecha actual]
+
+---
+
+### ✨ Funcionalidades Implementadas
+
+#### Filtros por Estado
+
+| Filtro | Descripción |
+|--------|-------------|
+| Todas | Muestra todas las tareas sin filtrar |
+| Pendientes | Tareas no completadas y no pospuestas |
+| Completadas | Tareas con checkbox marcado |
+| Pospuestas | Tareas con badge naranja (pospuestas pero no completadas) |
+
+#### Búsqueda de Texto
+
+- Búsqueda en tiempo real por título y descripción
+- debounce de 300ms para optimizar rendimiento
+- Botón "X" para limpiar búsqueda rápidamente
+- Case-insensitive (no distingue mayúsculas/minúsculas)
+
+#### Contador de Resultados
+
+- Muestra "X de Y tareas" actualizado dinámicamente
+- Ayuda al usuario a entender cuántas tareas coinciden con su búsqueda/filtro
+
+#### Estados Vacíos Inteligentes
+
+| Situación | Mensaje mostrado |
+|-----------|-----------------|
+| Sin tareas | 📭 No tienes tareas todavía |
+| Sin resultados (filtro/búsqueda) | 😕 No se encontraron tareas + botón "Ver todas las tareas" |
+
+---
+
+### 📁 Archivos Modificados
+
+| Archivo | Cambios |
+|---------|---------|
+| src/components/TaskList.vue | Nuevas variables de estado: currentFilter, searchQuery, searchTimeout. Propiedad computada filters con contadores. Propiedad computada filteredTasks con lógica combinada. Funciones: handleSearchInput, clearSearch, resetFilters. Template: botones de filtro, barra de búsqueda, contador, estado vacío. Estilos: sección completa para filtros y búsqueda + responsive |
+
+---
+
+### 🔧 Cambios Técnicos
+
+#### Nuevas Variables Reactivas
+
+| Variable | Tipo | Valor inicial | Propósito |
+|----------|------|---------------|-----------|
+| currentFilter | ref | 'all' | Filtro activo (all, pending, completed, postponed) |
+| searchQuery | ref | '' | Texto de búsqueda del usuario |
+| searchTimeout | ref | null | Timeout para debounce de búsqueda |
+
+#### Propiedad Computada: filters
+
+Devuelve array de 4 objetos con:
+- value: identificador del filtro
+- label: texto visible del botón
+- count: número de tareas que coinciden con ese filtro
+
+#### Propiedad Computada: filteredTasks
+
+Aplica dos niveles de filtrado:
+1. Filtra por estado según currentFilter
+2. Filtra por texto de búsqueda en título y descripción
+3. Devuelve array de tareas que coinciden con ambos criterios
+
+#### Funciones Nuevas
+
+| Función | Propósito |
+|---------|-----------|
+| handleSearchInput() | Aplica debounce de 300ms a la búsqueda |
+| clearSearch() | Limpia el campo de búsqueda |
+| resetFilters() | Resetea filtro y búsqueda a valores por defecto |
+
+---
+
+### 🎨 Estilos Añadidos
+
+| Clase CSS | Propósito |
+|-----------|-----------|
+| .task-filters | Contenedor principal de filtros y búsqueda |
+| .filter-buttons | Grid de botones de filtro |
+| .filter-btn | Botón individual de filtro |
+| .filter-btn.active | Estado activo del filtro |
+| .filter-count | Badge con contador de tareas por filtro |
+| .search-box | Contenedor de la barra de búsqueda |
+| .search-input | Input de búsqueda |
+| .search-clear | Botón X para limpiar búsqueda |
+| .results-count | Contador de resultados mostrados |
+| .empty-state-filtered | Estado vacío cuando no hay resultados |
+
+#### Responsive Móvil
+
+- Botones de filtro con wrap automático
+- Búsqueda full-width en pantallas menores a 640px
+- Contador alineado a la izquierda en móvil
+- Padding y tamaños de fuente reducidos
+
+---
+
+### 🧪 Pruebas Realizadas
+
+| # | Prueba | Resultado |
+|---|--------|-----------|
+| 1 | Ver lista de tareas con filtros | ✅ Funciona |
+| 2 | Filtrar por Pendientes | ✅ Funciona |
+| 3 | Filtrar por Completadas | ✅ Funciona |
+| 4 | Filtrar por Pospuestas | ✅ Funciona |
+| 5 | Búsqueda por título | ✅ Funciona |
+| 6 | Búsqueda por descripción | ✅ Funciona |
+| 7 | Combinar filtro + búsqueda | ✅ Funciona |
+| 8 | Estado vacío con reset | ✅ Funciona |
+| 9 | Contador de resultados | ✅ Funciona |
+| 10 | Responsive en móvil (375px) | ✅ Funciona |
+
+---
+
 ### 📊 Estado Actual del Proyecto
 
 | Módulo | Estado | Completitud |
 |--------|--------|-------------|
 | Configuración del entorno | ✅ Completado | 100% |
 | Base de datos Supabase | ✅ Completado | 100% |
-| Autenticación (Auth) | ✅ Completado | 100% |
+| Autenticación | ✅ Completado | 100% |
 | Router y protección de rutas | ✅ Completado | 100% |
 | CRUD de tareas | ✅ Completado | 100% |
 | Perfiles y avatares (Storage) | ✅ Completado | 100% |
 | Galería pública | ✅ Completado | 100% |
 | Panel de administración | ✅ Completado | 100% |
+| Correcciones responsive | ✅ Completado | 100% |
+| Filtros y búsqueda | ✅ Completado | 100% |
 
+**Progreso total: ~99% (MVP completo + mejoras)**
+
+---
+
+### 🚀 Próximos Pasos Sugeridos (Opcionales)
+
+| Feature | Prioridad | Descripción |
+|---------|-----------|-------------|
+| Notificaciones toast | Media | Mensajes flotantes de éxito/error |
+| Ordenar tareas | Baja | Por fecha, estado, alfabético |
+| Exportar a CSV | Baja | Descargar tareas en formato CSV |
+| Confirmación custom | Baja | Modal propio en vez de confirm() nativo |
+| Deploy en producción | Media | Publicar en Vercel con variables de entorno |
 
 ---
 
 
-*Última actualización: [04/03/2026]*
+*Última actualización: [05/03/2026]*
