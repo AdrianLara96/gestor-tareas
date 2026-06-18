@@ -4,7 +4,7 @@ Aplicación full stack para gestión de tareas desarrollada con Vue 3 y Supabase
 
 ## Demo
 
-[Ver aplicación en producción](https://tu-app.vercel.app)
+[Ver aplicación en producción](https://gestor-tareas-khaki.vercel.app/)
 
 ##  Tecnologías
 
